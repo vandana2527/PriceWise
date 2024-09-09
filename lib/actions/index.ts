@@ -6,6 +6,7 @@ import { connectToDB } from "../mongoose";
 import { scrapeAmazonProduct } from "../scraper";
 import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
 import { generateEmailBody, sendEmail } from "../nodemailer";
+import { User } from "@/types";
 
 export async function scrapeAndStoreProduct(productUrl: string) {
   if(!productUrl) return;
@@ -94,20 +95,21 @@ export async function getSimilarProducts(productId: string) {
 
 export async function addUserEmailToProduct(productId: string, userEmail: string) {
   try {
-    const Product = await Product.findById(productId);
+    connectToDB();
+    const product = await Product.findById(productId);
 
     if(!product) return;
 
     const userExists = product.users.some((user: User) => user.email === userEmail);
     
     if(!userExists) {
-      productId.users.push({ email: userEmail });
+      product.users.push({ email: userEmail });
 
       await product.save();
 
-      const emailContent = await genereteEmailBody(product, "WELCOME");
+      const emailContent = await generateEmailBody(product, "WELCOME");
 
-      await sendMail(emailContent, [userEmail])
+      await sendEmail(emailContent, [userEmail])
     }
   } catch (error) {
     console.log(error);
@@ -116,4 +118,5 @@ export async function addUserEmailToProduct(productId: string, userEmail: string
 
 function genereteEmailBody(product: any, arg1: string) {
   throw new Error("Function not implemented.");
+  
 }

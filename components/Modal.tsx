@@ -37,6 +37,11 @@ const Modal = ({ productId }: Props) => {
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" onClose={closeModal} className="dialog-container">
+          {/* Manually add the overlay */}
+          {isOpen && (
+            <div className="fixed inset-0 bg-black opacity-30" aria-hidden="true" />
+          )}
+
           <div className="min-h-screen px-4 text-center">
             <Transition.Child
               as={Fragment}
@@ -47,14 +52,12 @@ const Modal = ({ productId }: Props) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0" /> 
+              <span
+                className="inline-block h-screen align-middle"
+                aria-hidden="true"
+              />
             </Transition.Child>
 
-            <span
-              className="inline-block h-screen align-middle"
-              aria-hidden="true"
-            />
-            
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
